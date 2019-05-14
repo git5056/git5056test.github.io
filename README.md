@@ -2,7 +2,7 @@
 **作者：一只灰猫**
 
 #### 功能
-1. [公开招募计算器](https://graueneko.github.io/akhr.html)
+1. [公开招募计算器](https://git5056.github.io/graueneko.github.io/akhr.html)
 2. [升级消耗计算器](https://graueneko.github.io/aklevel.html)
 3. [精英材料计算器](https://graueneko.github.io/akevolve.html)
 4. [干员表](https://graueneko.github.io/akhrchars.html)
