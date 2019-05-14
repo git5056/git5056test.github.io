@@ -98,6 +98,11 @@
                                 <span class="cn">特大</span>
                                 <span class="en">Ex-large</span>
                             </button>
+                            <span class="checkbox checkbox-primary">
+                                <input id="tagAlert" class="styled" type="checkbox" checked>
+                                <label for="tagAlert">稀有tag组合提醒
+                                </label>
+                                </div>
                         </span>
                     </td>
                 </tr>
@@ -386,6 +391,94 @@
                 if (lang !== 'cn') $('[data-toggle="tooltip"]').tooltip();
             }
 
+
+
+            function clacTagsAlert(){
+                let len = checkedTags.length;
+                let count = Math.pow(2, checkedTags.length);
+                let combs = [];
+                //alert(checkedTags);
+                // 2,2组合
+                if(len&&len>1){
+                    var tagsCopy = checkedTags.slice();
+                    for(var i= 0; i<len; i++){
+                        for(var j = i+1; j<len; j++){
+                            //alert(checkedTags[i]+":"+tagsCopy[j]);
+                            var tempArr = [];
+                            tempArr.push(checkedTags[i]);
+                            tempArr.push(checkedTags[j]);
+                            combs.push(tempArr); 
+                        }
+                    }
+                }
+                for(var i=0; i<combs.length;i++){
+                    var tags = combs[i];
+                    var ieioArr = []; // 交集
+                    var ieioArrName = [];
+                    for(var j=0; j<combs[i].length; j++){
+                        var tag = combs[i][j];
+                        let chars = [...tags_aval[tag]];
+                        let charsName = $(chars).map(function(){
+                            return this.name;
+                        });
+                        if(j==0){
+                            ieioArr = chars;
+                            ieioArrName = $(ieioArr).map(function(){
+                                return this.name;
+                            });
+                            continue;
+                        }
+                        // 从第二个开始遍历
+                        var saveIndex = [];
+                        for(var k=0; k<chars.length;k++){
+                            var idx = $.inArray(chars[k].name, ieioArrName);
+                            if(idx>-1){
+                                saveIndex.push(idx);
+                            }
+                        }
+                        var toDelObj = {};
+                        var delCount = 0;
+                        for(var l=0;l<ieioArr.length;l++){
+                            if ($.inArray(l, saveIndex)==-1){
+                                ieioArr[l] = ieioArrName[l] = toDelObj;
+                                delCount++;
+                            }
+                        }
+                        while(delCount--){
+                            ieioArr.splice($.inArray(toDelObj, ieioArr),1);
+                            ieioArrName.splice($.inArray(toDelObj, ieioArr),1);
+                        }
+                    }
+
+                    // 去掉六星if
+                    if($.inArray("高级资深干员", checkedTags)==-1){
+                        ieioArr = $.grep(ieioArr, function(n,i){
+                            return n.level < 6;
+                        });
+                    }
+                    if(ieioArr.length>0 && $.grep(ieioArr, function(n,i){
+                            return n.level < 5;
+                        }).length<1){
+                            alert("精英标签:"+ tags.join()+ "\n" + 
+                            $.makeArray($(ieioArr).map(function(n,i){return JSON.stringify(this);})).join("\n")
+                            );
+                        }
+                    //alert(tags.join() + "\n" + JSON.stringify(ieioArr));
+                    // if(tempArr.length>1){
+                    //     // 取交集--
+                    //     var ieioArr = []; // 交集
+                    //     for(var i=1;i<tempArr.length;i++){
+                    //         var lastArr = tempArr[i-1];
+                    //         for(var j=0; j<2; j++){
+
+                    //         }
+                    //     }
+                    //     // --取交集
+                    // }
+                    //alert(JSON.stringify(tempArr));
+                }
+            }
+
             let hasHidden = false;
             $(document).on("click", ".btn-char", function () {
                 if (!hasHidden) {
@@ -436,6 +529,9 @@
                     }
                 }
                 $(this).toggleClass("btn-primary btn-secondary");
+                if($("#tagAlert").is(":checked")){
+                    clacTagsAlert();
+                }
                 calc();
             });
             $(document).on("click", ".btn-opt", function () {
